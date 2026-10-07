@@ -1,0 +1,180 @@
+@model AcxiomCRM.Models.Customer
+@{
+    ViewData["Title"] = "Customer Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-building text-primary me-2"></i>@Model.CustomerName</h3>
+        <p class="text-muted small mb-0">Customer Code: <code>@Model.CustomerCode</code> | Status: <span class="badge @(Model.Status == "Active" ? "bg-success" : "bg-secondary")">@Model.Status</span></p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.CustomerId" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Edit Customer</a>
+        <a asp-controller="Opportunities" asp-action="Create" asp-route-customerId="@Model.CustomerId" class="btn btn-warning"><i class="bi bi-plus-lg me-1"></i> New Opportunity</a>
+        <a asp-controller="FollowUps" asp-action="Create" asp-route-customerId="@Model.CustomerId" class="btn btn-info text-white"><i class="bi bi-calendar-plus me-1"></i> Schedule Follow-up</a>
+        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Account Information Card -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold py-3 border-bottom">
+                <i class="bi bi-info-circle text-primary me-2"></i>Account Overview
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Company:</dt>
+                    <dd class="col-sm-8 fw-semibold">@(string.IsNullOrEmpty(Model.CompanyName) ? "-" : Model.CompanyName)</dd>
+
+                    <dt class="col-sm-4 text-muted">Email:</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+
+                    <dt class="col-sm-4 text-muted">Phone:</dt>
+                    <dd class="col-sm-8">@Model.Phone</dd>
+
+                    <dt class="col-sm-4 text-muted">Address:</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Address) ? "-" : $"{Model.Address}, {Model.City}, {Model.State}")</dd>
+
+                    <dt class="col-sm-4 text-muted">Assigned Exec:</dt>
+                    <dd class="col-sm-8"><span class="badge bg-light text-dark border">@(Model.AssignedTo?.Name ?? "Unassigned")</span></dd>
+
+                    <dt class="col-sm-4 text-muted">Created Date:</dt>
+                    <dd class="col-sm-8">@Model.CreatedDate.ToString("MMM dd, yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-4 text-muted">Notes:</dt>
+                    <dd class="col-sm-8 text-wrap">@(string.IsNullOrEmpty(Model.Notes) ? "No notes recorded." : Model.Notes)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Opportunities -->
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-diagram-3 text-warning me-2"></i>Linked Sales Opportunities (@Model.Opportunities.Count)</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Opportunity Name</th>
+                                <th>Amount</th>
+                                <th>Stage</th>
+                                <th>Prob (%)</th>
+                                <th>Close Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Opportunities.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No opportunities linked to this customer.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var opp in Model.Opportunities)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Opportunities" asp-action="Details" asp-route-id="@opp.OpportunityId" class="fw-semibold text-decoration-none">@opp.OpportunityName</a>
+                                        </td>
+                                        <td class="fw-bold text-success">$@opp.Amount.ToString("N0")</td>
+                                        <td><span class="badge bg-warning text-dark">@opp.Stage</span></td>
+                                        <td>@opp.Probability%</td>
+                                        <td class="small">@opp.ExpectedCloseDate.ToString("MMM dd, yyyy")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Follow-Ups & Activity History -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white fw-bold py-3 border-bottom">
+                <i class="bi bi-calendar-check text-info me-2"></i>Follow-Up History
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.FollowUps.Any())
+                            {
+                                <tr><td colspan="4" class="text-center py-3 text-muted">No follow-ups recorded.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var fu in Model.FollowUps.OrderByDescending(f => f.FollowUpDate))
+                                {
+                                    <tr>
+                                        <td>@fu.Subject</td>
+                                        <td class="small">@fu.FollowUpDate.ToString("yyyy-MM-dd")</td>
+                                        <td><span class="badge bg-secondary">@fu.FollowUpType</span></td>
+                                        <td><span class="badge @(fu.Status == "Completed" ? "bg-success" : fu.Status == "Planned" ? "bg-primary" : "bg-danger")">@fu.Status</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white fw-bold py-3 border-bottom">
+                <i class="bi bi-clock-history text-secondary me-2"></i>Activity Log
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Activities.Any())
+                            {
+                                <tr><td colspan="3" class="text-center py-3 text-muted">No activities logged.</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var act in Model.Activities.OrderByDescending(a => a.ActivityDate))
+                                {
+                                    <tr>
+                                        <td>@act.Subject</td>
+                                        <td><span class="badge bg-info text-dark">@act.ActivityType</span></td>
+                                        <td class="small">@act.ActivityDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

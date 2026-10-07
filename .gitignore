@@ -1,0 +1,30 @@
+## Build & Output Directories
+[Bb]in/
+[Oo]bj/
+[Lld]og/
+[Lld]ogs/
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Entity Framework & Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+## IDE & Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+## OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini

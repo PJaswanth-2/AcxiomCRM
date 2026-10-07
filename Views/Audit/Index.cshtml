@@ -1,0 +1,84 @@
+@model IEnumerable<AcxiomCRM.Models.AuditLog>
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-journal-text text-danger me-2"></i>Audit Trails & System Logs</h3>
+        <p class="text-muted small mb-0">Append-only security events, login tracking, record mutations, and role changes</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="action" value="@ViewBag.Action" class="form-control" placeholder="Filter by action (e.g. Login, Customer, Conversion)..." />
+            </div>
+            <div class="col-md-5">
+                <select name="module" class="form-select">
+                    <option value="">-- All Modules / Entities --</option>
+                    <option value="Auth" selected="@(ViewBag.Module == "Auth")">Auth / Security</option>
+                    <option value="Customer" selected="@(ViewBag.Module == "Customer")">Customer</option>
+                    <option value="Lead" selected="@(ViewBag.Module == "Lead")">Lead</option>
+                    <option value="Opportunity" selected="@(ViewBag.Module == "Opportunity")">Opportunity</option>
+                    <option value="FollowUp" selected="@(ViewBag.Module == "FollowUp")">FollowUp</option>
+                    <option value="User" selected="@(ViewBag.Module == "User")">User Administration</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-filter"></i> Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 font-monospace small">
+                <thead class="table-light border-bottom font-sans-serif fw-bold">
+                    <tr>
+                        <th>Timestamp (UTC)</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Module</th>
+                        <th>Record ID</th>
+                        <th>IP Address</th>
+                        <th>Result</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">No audit log records found matching filter.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="text-nowrap">@log.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td><strong>@(log.UserName ?? "System")</strong></td>
+                                <td><span class="badge bg-dark">@log.Action</span></td>
+                                <td><span class="badge bg-light text-dark border">@log.EntityName</span></td>
+                                <td><code>@(log.RecordId ?? "-")</code></td>
+                                <td>@log.IpAddress</td>
+                                <td>
+                                    <span class="badge @(log.Result == "Success" ? "bg-success" : "bg-danger")">@log.Result</span>
+                                </td>
+                                <td class="text-wrap" style="max-width: 300px;">@log.Details</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

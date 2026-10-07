@@ -1,0 +1,141 @@
+@using AcxiomCRM.Authorization
+@{
+    ViewData["Title"] = "Reports & Analytics Hub";
+}
+
+<div class="mb-4">
+    <h3 class="fw-bold mb-1"><i class="bi bi-bar-chart text-primary me-2"></i>Reports & Analytics Hub</h3>
+    <p class="text-muted small mb-0">Role-scoped executive reporting, pipeline analysis, conversion metrics, and CSV exports</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-people-fill fs-2"></i>
+                </div>
+                <h5 class="fw-bold">Customer Report</h5>
+                <p class="text-muted small mb-3">Complete customer master list, statuses, owners, and account history.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-action="CustomerReport" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    <a asp-action="ExportCsv" asp-route-reportType="customer" class="btn btn-primary btn-sm"><i class="bi bi-download"></i> CSV Export</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-person-lines-fill fs-2"></i>
+                </div>
+                <h5 class="fw-bold">Lead Report</h5>
+                <p class="text-muted small mb-3">Lead acquisition sources, status distribution, priorities, and expected values.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-action="LeadReport" class="btn btn-outline-info btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    <a asp-action="ExportCsv" asp-route-reportType="lead" class="btn btn-info text-white btn-sm"><i class="bi bi-download"></i> CSV Export</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-diagram-3-fill fs-2 text-warning"></i>
+                </div>
+                <h5 class="fw-bold">Opportunity Report</h5>
+                <p class="text-muted small mb-3">Sales opportunity pipeline, probability breakdown, and close dates.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-action="OpportunityReport" class="btn btn-outline-warning text-dark btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    <a asp-action="ExportCsv" asp-route-reportType="opportunity" class="btn btn-warning text-dark btn-sm"><i class="bi bi-download"></i> CSV Export</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-funnel-fill fs-2 text-success"></i>
+                </div>
+                <h5 class="fw-bold">Weighted Pipeline Report</h5>
+                <p class="text-muted small mb-3">Stage-wise opportunity count, total value, and weighted pipeline math.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-action="PipelineReport" class="btn btn-outline-success btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    <a asp-action="ExportCsv" asp-route-reportType="pipeline" class="btn btn-success btn-sm"><i class="bi bi-download"></i> CSV Export</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-arrow-repeat fs-2"></i>
+                </div>
+                <h5 class="fw-bold">Lead Conversion Report</h5>
+                <p class="text-muted small mb-3">Lead conversion rate percent and lead to customer metrics.</p>
+                <div class="d-flex justify-content-center">
+                    <a asp-action="ConversionReport" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-4 text-center">
+                <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-calendar-check-fill fs-2 text-secondary"></i>
+                </div>
+                <h5 class="fw-bold">Follow-Up Report</h5>
+                <p class="text-muted small mb-3">Planned, completed, missed, and overdue activity analytics.</p>
+                <div class="d-flex justify-content-center">
+                    <a asp-action="FollowUpReport" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (UserScopeHelper.IsAdmin(User) || UserScopeHelper.IsManager(User))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-dark bg-opacity-10 text-dark rounded-circle p-3 d-inline-block mb-3">
+                        <i class="bi bi-person-workspace fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold">User Activity Report</h5>
+                    <p class="text-muted small mb-3">Assigned record counts and activity breakdown per team member.</p>
+                    <div class="d-flex justify-content-center">
+                        <a asp-action="UserActivityReport" class="btn btn-outline-dark btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (UserScopeHelper.IsAdmin(User))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 d-inline-block mb-3">
+                        <i class="bi bi-journal-check fs-2 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">Audit Log Report</h5>
+                    <p class="text-muted small mb-3">Security auditing, login history, and record mutation events.</p>
+                    <div class="d-flex justify-content-center">
+                        <a asp-action="AuditReport" class="btn btn-outline-danger btn-sm"><i class="bi bi-eye"></i> View Report</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

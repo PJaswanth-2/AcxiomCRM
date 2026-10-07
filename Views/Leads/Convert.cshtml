@@ -1,0 +1,43 @@
+@model AcxiomCRM.Models.Lead
+@{
+    ViewData["Title"] = "Convert Lead";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-arrow-right-circle me-2"></i>Convert Lead to Customer Account</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info border-0 shadow-sm mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i> Converting lead <strong>@Model.LeadName (@Model.LeadCode)</strong> will automatically:
+                    <ul class="mb-0 mt-2 small">
+                        <li>Create a new active <strong>Customer Account</strong> using contact details.</li>
+                        <li>Create a new <strong>Sales Opportunity</strong> with amount <strong>$@Model.ExpectedValue.ToString("N0")</strong>.</li>
+                        <li>Update Lead status to <strong>Converted</strong> and record an Audit Log event.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-light p-3 rounded mb-4 border">
+                    <div class="row g-2 small">
+                        <div class="col-6"><strong>Lead Name:</strong> @Model.LeadName</div>
+                        <div class="col-6"><strong>Company:</strong> @(string.IsNullOrEmpty(Model.CompanyName) ? "-" : Model.CompanyName)</div>
+                        <div class="col-6"><strong>Email:</strong> @Model.Email</div>
+                        <div class="col-6"><strong>Phone:</strong> @Model.Phone</div>
+                        <div class="col-6"><strong>Expected Deal:</strong> $@Model.ExpectedValue.ToString("N0")</div>
+                        <div class="col-6"><strong>Source:</strong> @Model.Source</div>
+                    </div>
+                </div>
+
+                <form asp-action="ConvertConfirmed" asp-route-id="@Model.LeadId" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success py-3 fw-bold fs-6 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Confirm & Convert Lead</button>
+                        <a asp-action="Details" asp-route-id="@Model.LeadId" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
